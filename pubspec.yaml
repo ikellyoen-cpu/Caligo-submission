@@ -1,0 +1,105 @@
+name: caligo
+description: "A new Flutter project."
+publish_to: 'none'
+
+version: 1.0.0+38
+
+environment:
+  sdk: ">=3.8.1 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  webview_flutter: ^4.13.0
+  path_provider: ^2.1.4
+  cupertino_icons: ^1.0.8
+  google_fonts: ^6.3.2
+  shared_preferences: ^2.2.2
+  
+  image_picker: ^1.1.2
+  table_calendar: ^3.1.2
+  http: ^1.5.0
+  flutter_local_notifications: 19.4.2
+  flutter_analog_clock: ^1.0.3
+  geolocator: ^14.0.2
+  speech_to_text: ^7.0.0
+  timezone: ^0.10.1
+  flutter_timezone: ^4.1.1
+  flutter_map: ^7.0.2
+  latlong2: ^0.9.1
+  permission_handler: ^12.0.1
+  audioplayers: ^6.6.0
+  flutter_phone_direct_caller: ^2.1.1  #url_launcher: ^6.3.2
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: ^0.13.1
+  flutter_lints: ^5.0.0
+flutter_launcher_icons:
+  android: true
+  image_path: "assets/caligo_appicon.png"
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/caligo_appicon.png
+    - assets/puzzlePieces/forest_puzzle_piece_1.png
+    - assets/puzzlePieces/forest_puzzle_piece_2.png
+    - assets/puzzlePieces/forest_puzzle_piece_3.png
+    - assets/puzzlePieces/forest_puzzle_piece_4.png
+    - assets/puzzlePieces/forest_puzzle_piece_5.png
+    - assets/puzzlePieces/forest_puzzle_piece_6.png
+    - assets/puzzlePieces/utopia_1.png
+    - assets/puzzlePieces/utopia_2.png
+    - assets/puzzlePieces/utopia_3.png
+    - assets/puzzlePieces/utopia_4.png
+    - assets/puzzlePieces/utopia_5.png
+    - assets/puzzlePieces/utopia_6.png
+    - assets/puzzlePieces/chickenontree_1.png
+    - assets/puzzlePieces/chickenontree_2.png
+    - assets/puzzlePieces/chickenontree_3.png
+    - assets/puzzlePieces/chickenontree_4.png
+    - assets/puzzlePieces/chickenontree_5.png
+    - assets/puzzlePieces/chickenontree_6.png
+    - assets/puzzlePieces/chickenontree_7.png
+    - assets/puzzlePieces/chickenontree_8.png
+    - assets/puzzlePieces/chickenontree_9.png
+    - assets/logo.png
+    - assets/TowerA.png
+    - assets/TowerB.png
+    - assets/TowerC.png
+    - assets/sounds/default_bgm.mp3
+    - assets/sounds/Classical.mp3
+    - assets/sounds/Relaxing.mp3
+    - assets/sounds/Nature.mp3
+    - assets/sounds/building_sfx.mp3
+    - assets/sounds/buildingComplete_sfx.mp3
+    - assets/sounds/towerFloor_upgrade.mp3
+    - assets/game_bg.png
+    - assets/patternmemory_icon.png
+    - assets/arithmetic_icon.png
+    - assets/tictactoe_icon.png
+    - assets/puzzlegame_icon.png
+    - assets/family_icon.png
+    - assets/pointsicon.png
+    - assets/EmptyProfilePic.png
+    - assets/tower_skybg.png
+    - assets/crane_neck.png
+    - assets/crane_head.png
+    - assets/crane.png
+    - assets/daily_schedule_bg.png
+    - assets/Map_Background.png
+    - assets/ground_level_1.png
+    - assets/homepage_bg.png
+    - assets/gamesandtowers.png
+    - assets/music_bg.png
+    - assets/albumIcons/Classical.png
+    - assets/albumIcons/Nature.png
+    - assets/albumIcons/Relaxing.png
+    - assets/balcony_1.png
+    - assets/balcony_2.png
+    - assets/balcony_3.png
+    - assets/balcony_4.png
+    - assets/balcony_5.png
+    - assets/balcony_6.png
+    - assets/reward_icon.png
