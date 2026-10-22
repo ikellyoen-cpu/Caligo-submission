@@ -1,5 +1,6 @@
-//Latest change : 13/OCT/2026 - Vino
-//devnote : Added multiple stuff im too lazy to mention all of them
+//Latest change : 20/OCT/2026 - Vino
+//devnote : Ready for hackathon no. 2
+import 'package:flutter/rendering.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:speech_to_text/speech_to_text.dart' as stt;
 import 'package:path_provider/path_provider.dart';
@@ -22,6 +23,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:geolocator/geolocator.dart';
+import 'package:flutter/foundation.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -726,16 +728,25 @@ class VinoPage extends StatefulWidget {
 }
 
 class _VinoPageState extends State<VinoPage> {
-  late final WebViewController vinoController;
+  late final WebViewController? vinoController;
 
   @override
   void initState() {
     super.initState();
-    vinoController = WebViewController()
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..loadRequest(
-        Uri.parse('https://vinoscape.netlify.app'),
-      );
+    if (!kIsWeb) {
+      vinoController = WebViewController()
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..loadRequest(
+          Uri.parse('https://vinoscape.netlify.app'),
+        );
+    } else {
+      vinoController = null;
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
@@ -754,7 +765,24 @@ class _VinoPageState extends State<VinoPage> {
         foregroundColor: Colors.white,
       ),
       body: SafeArea(
-        child: WebViewWidget(controller: vinoController),
+        child: (kIsWeb)
+            ? HtmlElementView.fromTagName(
+                tagName: 'iframe',
+                onElementCreated: (Object element) {
+                  final iframe = element as dynamic;
+
+                  iframe.src = 'https://vinoscape.netlify.app';
+                  iframe.style.border = '0';
+                  iframe.style.width = '100%';
+                  iframe.style.height = '100%';
+                  iframe.setAttribute('allowfullscreen', '');
+                  iframe.setAttribute(
+                    'title',
+                    'Vinoscape',
+                  );
+                },
+              )
+            : WebViewWidget(controller: vinoController!),
       ),
     );
   }
@@ -963,7 +991,7 @@ class _AIChatPageState extends State<AIChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("{_appName}/AI Chatbot"),
+        title: Text("${_appName}/AI Chatbot"),
       ),
       body: Column(
         children: [
@@ -1337,7 +1365,6 @@ class Minigame extends StatefulWidget {
 class _MinigameState extends State<Minigame>
     with SingleTickerProviderStateMixin {
   late final AnimationController _pointsSpinController;
-  TextEditingController numberController = TextEditingController();
 
   List<int> pattern = [];
   List<int> playerPattern = [];
@@ -1555,6 +1582,402 @@ class _MinigameState extends State<Minigame>
         });
   }
 
+  void _Sudoku() {
+    Random random = Random();
+    List<bool> cellCondition = List.generate(
+      81,
+      (i) => random.nextBool(),
+    );
+    int selectedCell = 0;
+
+    List<List<int>> numbers = [
+      [
+        5,
+        3,
+        4,
+        6,
+        7,
+        8,
+        9,
+        1,
+        2,
+        6,
+        7,
+        2,
+        1,
+        9,
+        5,
+        3,
+        4,
+        8,
+        1,
+        9,
+        8,
+        3,
+        4,
+        2,
+        5,
+        6,
+        7,
+        8,
+        5,
+        9,
+        7,
+        6,
+        1,
+        4,
+        2,
+        3,
+        4,
+        2,
+        6,
+        8,
+        5,
+        3,
+        7,
+        9,
+        1,
+        7,
+        1,
+        3,
+        9,
+        2,
+        4,
+        8,
+        5,
+        6,
+        9,
+        6,
+        1,
+        5,
+        3,
+        7,
+        2,
+        8,
+        4,
+        2,
+        8,
+        7,
+        4,
+        1,
+        9,
+        6,
+        3,
+        5,
+        3,
+        4,
+        5,
+        2,
+        8,
+        6,
+        1,
+        7,
+        9,
+      ],
+      [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        1,
+        2,
+        3,
+        7,
+        8,
+        9,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        1,
+        5,
+        6,
+        7,
+        8,
+        9,
+        1,
+        2,
+        3,
+        4,
+        8,
+        9,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        1,
+        2,
+        6,
+        7,
+        8,
+        9,
+        1,
+        2,
+        3,
+        4,
+        5,
+        9,
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+      ],
+      [
+        9,
+        8,
+        7,
+        6,
+        5,
+        4,
+        3,
+        2,
+        1,
+        6,
+        5,
+        4,
+        3,
+        2,
+        1,
+        9,
+        8,
+        7,
+        3,
+        2,
+        1,
+        9,
+        8,
+        7,
+        6,
+        5,
+        4,
+        8,
+        7,
+        6,
+        5,
+        4,
+        3,
+        2,
+        1,
+        9,
+        5,
+        4,
+        3,
+        2,
+        1,
+        9,
+        8,
+        7,
+        6,
+        2,
+        1,
+        9,
+        8,
+        7,
+        6,
+        5,
+        4,
+        3,
+        7,
+        6,
+        5,
+        4,
+        3,
+        2,
+        1,
+        9,
+        8,
+        4,
+        3,
+        2,
+        1,
+        9,
+        8,
+        7,
+        6,
+        5,
+        1,
+        9,
+        8,
+        7,
+        6,
+        5,
+        4,
+        3,
+        2,
+      ],
+    ];
+    List<int> selectedBoard = numbers[Random().nextInt(numbers.length)];
+    List<int> userBoard =
+        List.generate(81, (i) => cellCondition[i] ? selectedBoard[i] : 0);
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) {
+        return StatefulBuilder(
+          builder: (context, dialogSetState) {
+            return AlertDialog(
+              insetPadding:
+                  const EdgeInsets.symmetric(horizontal: 12, vertical: 24),
+              contentPadding: const EdgeInsets.fromLTRB(12, 12, 12, 0),
+              title: Text(
+                "Sudoku",
+                style:
+                    GoogleFonts.acme(fontSize: 30, fontWeight: FontWeight.bold),
+              ),
+              content: SizedBox(
+                width: MediaQuery.of(context).size.width * 0.9,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    AspectRatio(
+                      aspectRatio: 1,
+                      child: GridView.count(
+                        crossAxisCount: 9,
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        children: [
+                          for (int i = 0; i < 81; i++)
+                            GestureDetector(
+                              onTap: () =>
+                                  dialogSetState(() => selectedCell = i),
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: selectedCell == i
+                                      ? Colors.amber.shade200
+                                      : Colors.white,
+                                  border: Border(
+                                    top: BorderSide(
+                                        width: (i ~/ 9) % 3 == 0 ? 2 : 0.5,
+                                        color: Colors.black),
+                                    left: BorderSide(
+                                        width: (i % 9) % 3 == 0 ? 2 : 0.5,
+                                        color: Colors.black),
+                                    right: BorderSide(
+                                        width: (i % 9) == 8 ? 2 : 0.5,
+                                        color: Colors.black),
+                                    bottom: BorderSide(
+                                        width: (i ~/ 9) == 8 ? 2 : 0.5,
+                                        color: Colors.black),
+                                  ),
+                                ),
+                                alignment: Alignment.center,
+                                child: FittedBox(
+                                  child: Text(
+                                    userBoard[i] == 0 ? '' : '${userBoard[i]}',
+                                    style: GoogleFonts.acme(
+                                      fontSize: 16,
+                                      // given numbers black, player's numbers blue
+                                      color: cellCondition[i]
+                                          ? Colors.black
+                                          : Colors.blue,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        for (int n = 1; n <= 9; n++)
+                          Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(1),
+                              child: ElevatedButton(
+                                onPressed: () {
+                                  // can't edit the numbers the puzzle gave you
+                                  if (cellCondition[selectedCell]) return;
+
+                                  dialogSetState(
+                                      () => userBoard[selectedCell] = n);
+
+                                  // win check
+                                  bool solved = true;
+                                  for (int i = 0; i < 81; i++) {
+                                    if (userBoard[i] != selectedBoard[i]) {
+                                      solved = false;
+                                      break;
+                                    }
+                                  }
+                                  if (solved) _awardUserPoints("Sudoku", 3);
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  padding: EdgeInsets.zero,
+                                  minimumSize: const Size(0, 36),
+                                  backgroundColor: Colors.green,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: Text('$n',
+                                    style: GoogleFonts.acme(fontSize: 15)),
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    if (cellCondition[selectedCell]) return;
+                    dialogSetState(() => userBoard[selectedCell] = 0);
+                  },
+                  child: Text("ERASE", style: GoogleFonts.acme(fontSize: 18)),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.pop(dialogContext),
+                  style: TextButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text("CLOSE", style: GoogleFonts.acme(fontSize: 20)),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+  }
+
   void _PatternMemory() {
     const List<List<dynamic>> _difficultyData = [
       ["Easy", 4, 1, Colors.green],
@@ -1562,7 +1985,7 @@ class _MinigameState extends State<Minigame>
       ["Hard", 10, 3, Colors.orange],
     ]; //[Name, pattern length, point reward, diff color]
 
-    String _currentDiff = "";
+    String _currentDiff = "Easy";
     int _patternLength = 0;
     int _pointReward = 0;
     bool showingPattern = false;
@@ -1785,7 +2208,7 @@ class _MinigameState extends State<Minigame>
                               children: [
                                 Icon(Icons.lock_rounded,
                                     size: 20.0, color: Colors.white),
-                                Text("Game hasn't begun",
+                                Text("Press START to play",
                                     style: GoogleFonts.acme(
                                         fontSize: 15, color: Colors.white))
                               ],
@@ -1795,19 +2218,15 @@ class _MinigameState extends State<Minigame>
                       ),
                   ]),
                   SizedBox(height: 10),
-                  Text(
-                    _currentDiff != ""
-                        ? (PatternPlaying)
-                            ? "Repeat the pattern"
-                            : "Press [START]"
-                        : "Choose a difficulty",
+                  const Text(
+                    "Difficulty Selection",
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.acme(
+                    style: TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  SizedBox(height: 5),
+                  const SizedBox(height: 5),
                   for (var data in _difficultyData)
                     Column(children: [
                       Row(
@@ -2351,13 +2770,18 @@ class _MinigameState extends State<Minigame>
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   if (!gameStarted)
-                    Padding(
-                      padding: EdgeInsets.only(bottom: 15),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.black, // Background color
+                        borderRadius:
+                            BorderRadius.circular(4.0), // Rounded corners
+                      ),
                       child: Text(
                         (maxBotIntelligence == 0.0)
                             ? "Choose difficulty"
                             : "Choose your player",
-                        style: GoogleFonts.acme(fontSize: 16),
+                        style:
+                            GoogleFonts.acme(fontSize: 16, color: Colors.white),
                       ),
                     ),
 
@@ -2521,24 +2945,20 @@ class _MinigameState extends State<Minigame>
                         ]),
 
                   SizedBox(height: 8),
-
-                  Row(children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.pop(dialogContext);
-                        },
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.red,
-                          foregroundColor: Colors.white,
-                        ),
-                        child: Text("CLOSE",
-                            style: GoogleFonts.acme(fontSize: 15)),
-                      ),
-                    ),
-                  ]),
                 ],
               ),
+              actions: <Widget>[
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(dialogContext);
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                    foregroundColor: Colors.white,
+                  ),
+                  child: Text("CLOSE", style: TextStyle(fontSize: 15)),
+                ),
+              ],
             );
           },
         );
@@ -2874,9 +3294,9 @@ class _MinigameState extends State<Minigame>
                       backgroundColor: Colors.green,
                       foregroundColor: Colors.white,
                     ),
-                    child: Text(
+                    child: const Text(
                       "Submit",
-                      style: GoogleFonts.acme(fontSize: 20),
+                      style: TextStyle(fontSize: 20),
                     ),
                   ),
                 TextButton(
@@ -2889,12 +3309,12 @@ class _MinigameState extends State<Minigame>
                     }
                   },
                   style: TextButton.styleFrom(
-                    backgroundColor: Colors.red,
+                    backgroundColor: Colors.green,
                     foregroundColor: Colors.white,
                   ),
                   child: Text(
-                    "hide/show",
-                    style: GoogleFonts.acme(fontSize: 20),
+                    showPictures ? "Start Quiz" : "Stop Quiz",
+                    style: TextStyle(fontSize: 20),
                   ),
                 ),
                 TextButton(
@@ -2905,9 +3325,9 @@ class _MinigameState extends State<Minigame>
                     backgroundColor: Colors.red,
                     foregroundColor: Colors.white,
                   ),
-                  child: Text(
+                  child: const Text(
                     "CLOSE",
-                    style: GoogleFonts.acme(fontSize: 20),
+                    style: TextStyle(fontSize: 20),
                   ),
                 ),
               ],
@@ -2919,6 +3339,8 @@ class _MinigameState extends State<Minigame>
   }
 
   Future<void> _MathGame() async {
+    TextEditingController numberController = TextEditingController();
+
     int number1 = 0;
     int number2 = 0;
     int operators = 0;
@@ -2926,7 +3348,8 @@ class _MinigameState extends State<Minigame>
     int answerMath = 0;
     int answerPlayerMath = 1000000;
     int number_range = 5;
-    int levelPoint = 0;
+    int levelPoint = 1;
+    bool questionShow = false;
     bool isFirstQuestion = true;
     showDialog(
       context: context,
@@ -2935,6 +3358,7 @@ class _MinigameState extends State<Minigame>
         return StatefulBuilder(
           builder: (context, dialogSetState) {
             void StartMath() {
+              questionShow = true;
               int newNumber1 = Random().nextInt(number_range);
               int newNumber2 = Random().nextInt(number_range);
               int newOperator = Random().nextInt(3) + 1;
@@ -2958,6 +3382,55 @@ class _MinigameState extends State<Minigame>
                 numberController.clear();
               });
             }
+
+            void submitAnswer() {
+              int? answerPlayerMath = int.tryParse(numberController.text);
+
+              if (answerPlayerMath == null || levelPoint == 0) {
+                return;
+              }
+
+              if (answerPlayerMath != answerMath) {
+                showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text(
+                        "Incorrect!",
+                        style: GoogleFonts.acme(
+                          fontSize: 30,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      content: Text(
+                        "Try again!",
+                        style: GoogleFonts.acme(fontSize: 20),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: Text(
+                            "OK",
+                            style: GoogleFonts.acme(fontSize: 20),
+                          ),
+                        ),
+                      ],
+                    );
+                  },
+                );
+
+                return;
+              }
+
+              _awardUserPoints(
+                  "Arithmetic Speedrun", levelPoint, isFirstQuestion);
+              isFirstQuestion = false;
+              StartMath();
+            }
+
+            StartMath();
 
             return AlertDialog(
               scrollable: true,
@@ -3028,99 +3501,16 @@ class _MinigameState extends State<Minigame>
                       border: OutlineInputBorder(),
                       hintText: "Enter your answer",
                     ),
+                    onSubmitted: (value) => submitAnswer,
                   ),
                   const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {
-                      int? answerPlayerMath =
-                          int.tryParse(numberController.text);
-
-                      if (answerPlayerMath == null || levelPoint == 0) {
-                        return;
-                      }
-
-                      if (answerPlayerMath != answerMath) {
-                        showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              title: Text(
-                                "Incorrect!",
-                                style: GoogleFonts.acme(
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              content: Text(
-                                "Try again!",
-                                style: GoogleFonts.acme(fontSize: 20),
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context);
-                                  },
-                                  child: Text(
-                                    "OK",
-                                    style: GoogleFonts.acme(fontSize: 20),
-                                  ),
-                                ),
-                              ],
-                            );
-                          },
-                        );
-
-                        return;
-                      }
-
-                      _awardUserPoints(
-                          "Arithmetic Speedrun", levelPoint, isFirstQuestion);
-                      isFirstQuestion = false;
-                      StartMath();
-
-                      // setState(() {
-                      //   points = points + levelPoint * multiplier;
-                      //   _configPointsData(true);
-                      // });
-
-                      // showDialog(
-                      //   context: context,
-                      //   builder: (context) {
-                      //     return AlertDialog(
-                      //       title: Text(
-                      //         "Correct!",
-                      //         style: GoogleFonts.acme(
-                      //           fontSize: 30,
-                      //           fontWeight: FontWeight.bold,
-                      //         ),
-                      //       ),
-                      //       content: Text(
-                      //         "+ $levelPoint points!\nYour points: $points",
-                      //         textAlign: TextAlign.center,
-                      //         style: GoogleFonts.acme(fontSize: 20),
-                      //       ),
-                      //       actions: [
-                      //         TextButton(
-                      //           onPressed: () {
-                      //             Navigator.pop(context);
-                      //             StartMath();
-                      //           },
-                      //           child: Text(
-                      //             "OK",
-                      //             style: GoogleFonts.acme(fontSize: 20),
-                      //           ),
-                      //         ),
-                      //       ],
-                      //     );
-                      //   },
-                      // );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor:
-                          levelPoint == 0 ? Colors.grey : Colors.blue,
-                      foregroundColor: Colors.white,
+                  const Text(
+                    "Difficulty Selection",
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
                     ),
-                    child: const Text("Submit"),
                   ),
                   const SizedBox(height: 5),
                   Row(
@@ -3128,11 +3518,14 @@ class _MinigameState extends State<Minigame>
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          dialogSetState(() {
-                            levelPoint = 1;
-                            number_range = 10;
-                            if (operators == 0 || levelPoint != 1) StartMath();
-                          });
+                          questionShow
+                              ? dialogSetState(() {
+                                  levelPoint = 1;
+                                  number_range = 10;
+                                  if (operators == 0 || levelPoint != 1)
+                                    StartMath();
+                                })
+                              : null;
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.green,
@@ -3159,11 +3552,14 @@ class _MinigameState extends State<Minigame>
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          dialogSetState(() {
-                            levelPoint = 3;
-                            number_range = 20;
-                            if (operators == 0 || levelPoint != 3) StartMath();
-                          });
+                          questionShow
+                              ? dialogSetState(() {
+                                  levelPoint = 3;
+                                  number_range = 20;
+                                  if (operators == 0 || levelPoint != 3)
+                                    StartMath();
+                                })
+                              : null;
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.yellow,
@@ -3190,11 +3586,14 @@ class _MinigameState extends State<Minigame>
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          dialogSetState(() {
-                            levelPoint = 5;
-                            number_range = 50;
-                            if (operators == 0 || levelPoint != 5) StartMath();
-                          });
+                          questionShow
+                              ? dialogSetState(() {
+                                  levelPoint = 5;
+                                  number_range = 50;
+                                  if (operators == 0 || levelPoint != 5)
+                                    StartMath();
+                                })
+                              : null;
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.red,
@@ -3219,19 +3618,20 @@ class _MinigameState extends State<Minigame>
               ),
               actions: [
                 TextButton(
-                  onPressed: levelPoint == 0 ? null : StartMath,
+                  onPressed: submitAnswer,
                   style: TextButton.styleFrom(
                     backgroundColor:
                         levelPoint == 0 ? Colors.grey : Colors.green,
                     foregroundColor: Colors.white,
                   ),
                   child: Text(
-                    operators != 0 ? "SKIP" : "Start",
+                    "SUBMIT",
                     style: GoogleFonts.acme(fontSize: 20),
                   ),
                 ),
                 TextButton(
                   onPressed: () {
+                    numberController.dispose();
                     Navigator.pop(dialogContext);
                   },
                   style: TextButton.styleFrom(
@@ -3257,6 +3657,7 @@ class _MinigameState extends State<Minigame>
     "Arithmetic Speedrun": [_MathGame, "arithmetic_icon.png"],
     "Puzzle Game": [_PuzzleGame, "puzzlegame_icon.png"],
     "Tic-Tac-Toe VS Bot": [_TicTacToe, "tictactoe_icon.png"],
+    "Sudoku": [_Sudoku, "sudoku_icon.jpeg"],
   };
 
   @override
@@ -3288,7 +3689,7 @@ class _MinigameState extends State<Minigame>
   @override
   Widget build(BuildContext context) {
     final Size _screenSize = MediaQuery.of(context).size;
-    final double _minigameBoxHeight = _screenSize.height * 0.1;
+    final double _minigameBoxHeight = _screenSize.height * 0.15;
     return Scaffold(
       appBar: AppBar(
         title: Row(
@@ -3390,7 +3791,7 @@ class _MinigameState extends State<Minigame>
                       for (var minigameEntry in _minigameData.entries)
                         Column(children: [
                           Container(
-                            width: _screenSize.width * 0.75,
+                            width: _screenSize.width * 0.85,
                             height: _minigameBoxHeight,
                             decoration: BoxDecoration(
                                 color: Colors.amber.shade100,
@@ -3558,17 +3959,32 @@ class _MusicLibraryState extends State<MusicLibrary> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  SizedBox(width: 20),
+                  const SizedBox(width: 20),
                   Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                       Center(
                           child: Text(_tempSplashText,
                               style: GoogleFonts.acme(
                                   fontSize: 20,
                                   color: Colors.white,
                                   fontWeight: FontWeight.bold))),
+                      const SizedBox(height: 10),
+                      Center(
+                          child: Text(
+                              "Music: ${(currentTrack.value == "default_bgm.mp3") ? "Default Music" : (currentTrack.value ?? "UNKNOWN")}",
+                              style: GoogleFonts.acme(
+                                  fontSize: 15,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w400))),
+                      if (currentTrack.value == "default_bgm.mp3")
+                        const Center(
+                            child: Text("Late Night Radio - Kevin Macleod",
+                                style: TextStyle(
+                                    fontSize: 13,
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w400))),
                       for (List<String> data in _musicData)
                         Column(
                           children: [
@@ -3642,8 +4058,8 @@ class _MusicLibraryState extends State<MusicLibrary> {
                                           final isPlaying =
                                               track == "${data[0]}.mp3";
                                           return SizedBox(
-                                            width: _screenSize.width * 0.1,
-                                            height: _screenSize.width * 0.1,
+                                            width: _screenSize.height * 0.05,
+                                            height: _screenSize.height * 0.05,
                                             child: ElevatedButton(
                                               onPressed: () async {
                                                 if (isPlaying) {
@@ -5404,11 +5820,11 @@ class _StartMenuState extends State<StartMenu> with WidgetsBindingObserver {
     [queType.FILLBLANK, 9],
     [
       queType.NUMERIC,
-      [0, 100],
+      [1, 100],
     ],
     [
       queType.NUMERIC,
-      [0, 24],
+      [1, 24],
     ],
     [
       queType.PILGANKOMPLEKS,
@@ -5468,6 +5884,7 @@ class _StartMenuState extends State<StartMenu> with WidgetsBindingObserver {
   List<Object> _registrationData = [];
   Map<String, dynamic> _userData = {};
   File? _loadedPFP;
+  final _scrollController = ScrollController();
 
   String _formAlertText = "";
   // int _currentUnixTime = 0;
@@ -5999,6 +6416,7 @@ class _StartMenuState extends State<StartMenu> with WidgetsBindingObserver {
                         ),
                       ),
                       GridView.count(
+                        physics: const NeverScrollableScrollPhysics(),
                         shrinkWrap: true,
                         crossAxisCount: 2, // Displays 2 squares per row
                         crossAxisSpacing: 2, // Horizontal space between squares
@@ -6219,6 +6637,7 @@ class _StartMenuState extends State<StartMenu> with WidgetsBindingObserver {
         child: Center(
           child: SafeArea(
             child: SingleChildScrollView(
+              controller: _scrollController,
               child: SizedBox(
                 width: _screenSize.width,
                 child: Column(
@@ -6226,9 +6645,10 @@ class _StartMenuState extends State<StartMenu> with WidgetsBindingObserver {
                   children: [
                     SizedBox(
                       width: double.infinity,
+                      height: _screenSize.height * 0.25,
                       child: Image.asset(
                         "assets/logo.png",
-                        fit: BoxFit.fitWidth,
+                        fit: BoxFit.contain,
                       ),
                     ),
                     const SizedBox(height: 50),
@@ -6378,7 +6798,14 @@ class _StartMenuState extends State<StartMenu> with WidgetsBindingObserver {
                                 if (_formQueIndex < questions.length)
                                   Text(
                                     _tempString,
-                                    style: GoogleFonts.acme(fontSize: 20),
+                                    style: GoogleFonts.acme(fontSize: 18),
+                                  ),
+                                if (_formAlertText.isNotEmpty ||
+                                    _formAlertText == "")
+                                  Text(
+                                    _formAlertText,
+                                    style: GoogleFonts.acme(
+                                        fontSize: 12, color: Colors.red),
                                   ),
                                 if (_formQueIndex < questions.length)
                                   if (questionFormats[_formQueIndex][0]
@@ -6748,8 +7175,7 @@ class _StartMenuState extends State<StartMenu> with WidgetsBindingObserver {
                                 SizedBox(height: 50),
                                 Row(
                                     mainAxisAlignment: (_formQueIndex > 0 &&
-                                            _formQueIndex <
-                                                questions.length - 1)
+                                            _formQueIndex < questions.length)
                                         ? MainAxisAlignment.spaceBetween
                                         : MainAxisAlignment.end,
                                     mainAxisSize: MainAxisSize.max,
@@ -6757,7 +7183,7 @@ class _StartMenuState extends State<StartMenu> with WidgetsBindingObserver {
                                         CrossAxisAlignment.center,
                                     children: [
                                       if (_formQueIndex > 0 &&
-                                          _formQueIndex < questions.length - 1)
+                                          _formQueIndex <= questions.length - 1)
                                         Row(
                                             mainAxisAlignment:
                                                 MainAxisAlignment.start,
@@ -6768,6 +7194,7 @@ class _StartMenuState extends State<StartMenu> with WidgetsBindingObserver {
                                                   onPressed: () => setState(() {
                                                         _tempString = "";
                                                         _formQueIndex--;
+                                                        _formAlertText = "";
                                                       }),
                                                   style:
                                                       ElevatedButton.styleFrom(
@@ -6798,10 +7225,6 @@ class _StartMenuState extends State<StartMenu> with WidgetsBindingObserver {
                                             MainAxisAlignment.end,
                                         mainAxisSize: MainAxisSize.max,
                                         children: [
-                                          Text("${_formAlertText}  ",
-                                              style: GoogleFonts.acme(
-                                                  fontSize: 20,
-                                                  color: Colors.red)),
                                           ElevatedButton(
                                             onPressed: () {
                                               if (_formQueIndex >=
@@ -6986,6 +7409,23 @@ class _StartMenuState extends State<StartMenu> with WidgetsBindingObserver {
                                                           "");
                                                       await _loadUserProfile();
                                                     });
+
+                                              WidgetsBinding.instance
+                                                  .addPostFrameCallback((_) {
+                                                if (_scrollController
+                                                    .hasClients) {
+                                                  _scrollController.animateTo(
+                                                    accountSetup
+                                                        ? 0.0
+                                                        : _scrollController
+                                                            .position
+                                                            .maxScrollExtent,
+                                                    duration: const Duration(
+                                                        milliseconds: 200),
+                                                    curve: Curves.easeOut,
+                                                  );
+                                                }
+                                              });
                                             },
                                             style: ElevatedButton.styleFrom(
                                               backgroundColor: Colors.green,
@@ -7635,6 +8075,17 @@ class _StartMenuState extends State<StartMenu> with WidgetsBindingObserver {
                                   child: Text("See the devs behind $_appName")),
                             ),
                             const Divider(height: 28),
+                            Center(
+                                child: const Text("Built by TheStakeholders",
+                                    style: TextStyle(
+                                        fontSize: 14, color: Colors.white))),
+                            const SizedBox(height: 6),
+                            Center(
+                                child: const Text(
+                                    "Default BGM : Late Night Radio - Kevin Macleod",
+                                    style: TextStyle(
+                                        fontSize: 12, color: Colors.white))),
+                            const SizedBox(height: 20),
                           ],
                         ),
                       ),
@@ -7680,7 +8131,7 @@ void showDevelopersDialog(BuildContext context) {
                 name: 'Ilona Kelly Oen',
                 role: 'Backend Developer & Software Engineer',
                 desc:
-                    'Implemented the AI-powered chatbot assistant aswell as adding the Maps, Schedule, and other features',
+                    'Implemented the AI-powered chatbot assistant that heavily improves user experience aswell as adding the Maps, Schedule, and other features',
                 desc_width: _dialogSize.width * 0.9,
               ),
 
@@ -7689,9 +8140,9 @@ void showDevelopersDialog(BuildContext context) {
               // Developer 3
               _developerSection(
                 name: 'Jayson',
-                role: 'Vinoscape Developer',
+                role: 'Web Developer (Vinoscape)',
                 desc:
-                    'Mainly responsible for the implementation of Vinoscape, the 3D sandbox calming construction game in this app.',
+                    'Mainly responsible for the implementation of Vinoscape, the 3D sandbox calming construction game in this app. Mainly written in JavaScript.',
                 desc_width: _dialogSize.width * 0.9,
               ),
 
